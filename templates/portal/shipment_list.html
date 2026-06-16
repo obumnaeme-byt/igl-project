@@ -1,0 +1,154 @@
+{% extends "base_portal.html" %}
+{% load i18n humanize %}
+
+{% block title %}All Shipments — IGL Portal{% endblock %}
+
+{% block page_header %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <div>
+    <h4 class="mb-0"><i class="fas fa-boxes me-2"></i>All Shipments</h4>
+    <p class="text-muted mb-0 small">{{ page_obj.paginator.count|intcomma }} total records</p>
+  </div>
+  <a href="{% url 'portal_shipment_new' %}" class="btn btn-portal-primary">
+    <i class="fas fa-plus me-2"></i>New Shipment
+  </a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Search & Filter Bar -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body py-3">
+    <form method="get" action="{% url 'portal_shipment_list' %}" class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search token, name, country…" class="form-control form-control-sm">
+      </div>
+      <div class="col-md-2">
+        <select name="status" class="form-select form-select-sm">
+          <option value="">All Statuses</option>
+          {% for val, label in status_choices %}
+          <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input type="date" name="date_from" value="{{ date_from }}" class="form-control form-control-sm" placeholder="From">
+      </div>
+      <div class="col-md-2">
+        <input type="date" name="date_to" value="{{ date_to }}" class="form-control form-control-sm" placeholder="To">
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-portal-primary flex-fill">
+          <i class="fas fa-search"></i> Filter
+        </button>
+        <a href="{% url 'portal_shipment_list' %}" class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-times"></i>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover portal-table mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tracking Token</th>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Destination</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Est. Delivery</th>
+          <th>Registered</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in page_obj %}
+        <tr>
+          <td class="text-muted small">{{ forloop.counter0|add:page_obj.start_index }}</td>
+          <td><span class="font-mono fw-bold text-primary">{{ s.tracking_token }}</span></td>
+          <td>
+            {% if s.sender %}
+            <span class="fw-semibold">{{ s.sender.full_name|truncatechars:22 }}</span><br>
+            <small class="text-muted">{{ s.sender.city }}, {{ s.sender.country }}</small>
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td>
+            {% if s.receiver %}
+            <span class="fw-semibold">{{ s.receiver.full_name|truncatechars:22 }}</span><br>
+            <small class="text-muted">{{ s.receiver.city }}, {{ s.receiver.country }}</small>
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td>{{ s.destination_country }}</td>
+          <td><span class="status-pill status-{{ s.current_status }} status-sm">{{ s.get_current_status_display }}</span></td>
+          <td><span class="pay-badge pay-{{ s.payment_status }}">{{ s.get_payment_status_display }}</span></td>
+          <td class="small">{{ s.estimated_delivery_at|date:"d M Y" }}</td>
+          <td class="small text-muted">{{ s.created_at|date:"d M Y" }}</td>
+          <td class="text-center">
+            <div class="btn-group btn-group-sm">
+              <a href="{% url 'portal_shipment_detail' s.pk %}" class="btn btn-outline-primary" title="View / Update">
+                <i class="fas fa-eye"></i>
+              </a>
+              <a href="{% url 'portal_shipment_receipt' s.pk %}" class="btn btn-outline-secondary" title="Download Receipt">
+                <i class="fas fa-file-pdf"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="10" class="text-center text-muted py-5">
+            <i class="fas fa-box-open fa-2x mb-3 d-block"></i>
+            No shipments found.
+            {% if q or status_filter %}<a href="{% url 'portal_shipment_list' %}">Clear filters</a>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <small class="text-muted">
+      Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count|intcomma }}
+    </small>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.previous_page_number }}">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+        </li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+          <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ num }}">{{ num }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.next_page_number }}">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base_portal.html" %}
+{% load i18n humanize %}
+
+{% block title %}Dashboard — IGL Portal{% endblock %}
+
+{% block page_header %}
+<h4 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h4>
+<p class="text-muted mb-0 small">Welcome back, {{ request.user.username }}</p>
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card stat-card-primary">
+      <div class="stat-icon"><i class="fas fa-boxes"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_shipments|intcomma }}</div>
+        <div class="stat-label">Total Shipments</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card stat-card-warning">
+      <div class="stat-icon"><i class="fas fa-plane"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ in_transit_count|intcomma }}</div>
+        <div class="stat-label">In Transit</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card stat-card-success">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ delivered_count|intcomma }}</div>
+        <div class="stat-label">Delivered</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+  <div class="col-auto">
+    <a href="{% url 'portal_shipment_new' %}" class="btn btn-portal-primary">
+      <i class="fas fa-plus me-2"></i>New Shipment
+    </a>
+  </div>
+  <div class="col-auto">
+    <a href="{% url 'portal_shipment_list' %}" class="btn btn-outline-secondary">
+      <i class="fas fa-list me-2"></i>All Shipments
+    </a>
+  </div>
+</div>
+
+<!-- Recent Shipments -->
+<div class="card shadow-sm">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Shipments</h6>
+    <a href="{% url 'portal_shipment_list' %}" class="btn btn-sm btn-outline-secondary">View All</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover portal-table mb-0">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Destination</th>
+          <th>Status</th>
+          <th>Registered</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in recent_shipments %}
+        <tr>
+          <td class="font-mono fw-bold">{{ s.tracking_token }}</td>
+          <td>{% if s.sender %}{{ s.sender.full_name|truncatechars:20 }}{% else %}—{% endif %}</td>
+          <td>{% if s.receiver %}{{ s.receiver.full_name|truncatechars:20 }}{% else %}—{% endif %}</td>
+          <td>{{ s.destination_country }}</td>
+          <td><span class="status-pill status-{{ s.current_status }} status-sm">{{ s.get_current_status_display }}</span></td>
+          <td>{{ s.created_at|date:"d M Y" }}</td>
+          <td>
+            <a href="{% url 'portal_shipment_detail' s.pk %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+            <a href="{% url 'portal_shipment_receipt' s.pk %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-file-pdf"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No shipments yet. <a href="{% url 'portal_shipment_new' %}">Register your first shipment →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

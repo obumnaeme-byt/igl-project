@@ -1,0 +1,175 @@
+{% extends "base_public.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Inter Global Logistic — Track Your Shipment" %}{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO / TRACKING SECTION ────────────────────────────────────────────── -->
+<section class="hero-tracking">
+  <div class="hero-overlay">
+    <div class="container text-center">
+      <h1 class="hero-welcome">{% trans "WELCOME TO INTER GLOBAL LOGISTIC" %}</h1>
+      <h2 class="hero-subtitle"><i class="fas fa-barcode me-2"></i>{% trans "TRACK YOUR SHIPMENT" %}</h2>
+      <p class="hero-desc">{% trans "Enter Your Air WayBill (AWB) or Tracking Number To Continue" %}</p>
+
+      <div class="tracking-input-box mx-auto">
+        {% if error %}
+        <div class="alert alert-danger tracking-error" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+        </div>
+        {% endif %}
+
+        <form method="get" action="{% url 'home' %}" class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+          <input
+            type="text"
+            name="token"
+            id="trackingInput"
+            value="{{ token }}"
+            placeholder="{% trans 'e.g. IGL-X7K2-9QMT' %}"
+            class="form-control tracking-input"
+            maxlength="12"
+            autocomplete="off"
+            aria-label="{% trans 'Tracking code' %}"
+          >
+          <button type="submit" class="btn btn-track">
+            <i class="fas fa-search me-2"></i>{% trans "TRACK" %}
+          </button>
+        </form>
+        <p class="tracking-hint mt-2">{% trans "Format: IGL-XXXX-XXXX" %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT SECTION ──────────────────────────────────────────────────────── -->
+<section class="about-section py-5">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-md-6">
+        <img src="{% static 'images/inter.jpeg' %}" alt="{% trans 'Logistics Team' %}" class="img-fluid rounded-3">
+      </div>
+      <div class="col-md-6">
+        <h2>{% trans "About Inter Global Logistics" %}</h2>
+        <p class="text-muted">{% trans "Inter Global Logistics is a trusted international delivery company committed to providing fast, secure, and reliable shipping solutions for businesses and individuals worldwide." %}</p>
+        <p class="text-muted">{% trans "With a strong global network and advanced logistics systems, we ensure that every shipment is handled with care and delivered on time." %}</p>
+        <div class="mt-3">
+          <div class="d-flex align-items-center gap-2 mb-2"><i class="fas fa-check-circle text-igl"></i><span>{% trans "Trusted Worldwide" %}</span></div>
+          <div class="d-flex align-items-center gap-2 mb-2"><i class="fas fa-check-circle text-igl"></i><span>{% trans "Secure Delivery" %}</span></div>
+          <div class="d-flex align-items-center gap-2 mb-2"><i class="fas fa-check-circle text-igl"></i><span>{% trans "Fast Logistics" %}</span></div>
+        </div>
+        <a href="{% url 'about' %}" class="btn btn-igl mt-3">{% trans "Learn More" %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY US ──────────────────────────────────────────────────────────────── -->
+<section class="why-us py-5">
+  <div class="container text-center">
+    <h2 class="section-title">{% trans "Why Traders Choose Us" %}</h2>
+    <p class="section-subtitle text-muted">{% trans "We deliver reliability, speed, and trust to businesses worldwide." %}</p>
+    <div class="row g-4 mt-2">
+      {% with cards=6 %}
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card h-100"><i class="fas fa-truck"></i><h5>{% trans "Fast Delivery" %}</h5><p>{% trans "We ensure your goods arrive on time with our optimized logistics network." %}</p></div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card h-100"><i class="fas fa-shield-alt"></i><h5>{% trans "Secure Handling" %}</h5><p>{% trans "Your shipments are protected with strict safety and monitoring systems." %}</p></div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card h-100"><i class="fas fa-map-marker-alt"></i><h5>{% trans "Real-Time Tracking" %}</h5><p>{% trans "Track your packages anytime with our advanced tracking technology." %}</p></div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card h-100"><i class="fas fa-globe"></i><h5>{% trans "Global Coverage" %}</h5><p>{% trans "We connect traders across countries with seamless international delivery." %}</p></div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card h-100"><i class="fas fa-dollar-sign"></i><h5>{% trans "Affordable Pricing" %}</h5><p>{% trans "Transparent rates with no hidden charges, giving you full confidence." %}</p></div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card h-100"><i class="fas fa-headset"></i><h5>{% trans "24/7 Support" %}</h5><p>{% trans "Our team is always available to assist you anytime, anywhere." %}</p></div>
+      </div>
+      {% endwith %}
+    </div>
+  </div>
+</section>
+
+<!-- ── HERO BANNER ────────────────────────────────────────────────────────── -->
+<section class="hero-banner py-5">
+  <div class="container text-center text-white">
+    <h2>{% trans "Fast & Reliable Global Delivery" %}</h2>
+    <p>{% trans "We deliver your goods safely and on time worldwide." %}</p>
+    <a href="{% url 'contact' %}" class="btn btn-light btn-lg mt-3">{% trans "Get Started" %}</a>
+  </div>
+</section>
+
+<!-- ── DELIVERY GUIDELINES ────────────────────────────────────────────────── -->
+<section class="guidelines py-5">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-md-5">
+        <h2 class="text-white">{% trans "Important Delivery Guidelines You Must Know" %}</h2>
+        <p class="text-light">{% trans "Please review these guidelines carefully to ensure a smooth and successful delivery process." %}</p>
+      </div>
+      <div class="col-md-7">
+        <div class="advice-card text-center p-4">
+          <h6 class="advice-label">{% trans "Advice" %}</h6>
+          <p id="adviceText" class="advice-text">{{ advice_list.0 }}</p>
+          <hr>
+          <button onclick="nextAdvice()" class="btn btn-sm btn-outline-secondary shadow text-white">
+            <i class="fas fa-dice me-1"></i>{% trans "Next Tip" %}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ──────────────────────────────────────────────────────── -->
+<section class="testimonials py-5 bg-light">
+  <div class="container text-center">
+    <h2 class="section-title mb-5">{% trans "What Our Clients Say" %}</h2>
+    <div class="row g-4">
+      <div class="col-md-3 col-sm-6">
+        <div class="testimony-card"><img src="{% static 'images/1.jpeg' %}" alt="Carlos"><p><strong>Carlos M., Goiás</strong><br><em>"{% trans "Fast and reliable service. My package arrived on time and in perfect condition. Highly recommend!" %}"</em></p></div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="testimony-card"><img src="{% static 'images/2.jpeg' %}" alt="Alves"><p><strong>Alves R., São Paulo</strong><br><em>"{% trans "I was impressed with the transparency and updates throughout the delivery process. Very trustworthy." %}"</em></p></div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="testimony-card"><img src="{% static 'images/3.jpeg' %}" alt="Natalie"><p><strong>Natalie L., Berlin</strong><br><em>"{% trans "Excellent communication and smooth delivery. I knew exactly where my package was at all times." %}"</em></p></div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="testimony-card"><img src="{% static 'images/4.jpeg' %}" alt="James"><p><strong>James A., Monterrey</strong><br><em>"{% trans "Quick delivery and great customer support. They handled everything professionally from start to finish." %}"</em></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ──────────────────────────────────────────────────────────────── -->
+<section class="stats-section py-5">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-6 col-md-3"><h2 class="counter text-igl" data-target="5000">0</h2><p>{% trans "Deliveries Completed" %}</p></div>
+      <div class="col-6 col-md-3"><h2 class="counter text-igl" data-target="120">0</h2><p>{% trans "Countries Covered" %}</p></div>
+      <div class="col-6 col-md-3"><h2 class="text-igl">98%</h2><p>{% trans "On-Time Delivery" %}</p></div>
+      <div class="col-6 col-md-3"><h2 class="text-igl">24/7</h2><p>{% trans "Customer Support" %}</p></div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const adviceList = [
+  {% for advice in advice_list %}"{{ advice|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}
+];
+let adviceIndex = 0;
+function nextAdvice() {
+  adviceIndex = (adviceIndex + 1) % adviceList.length;
+  document.getElementById('adviceText').textContent = adviceList[adviceIndex];
+}
+setInterval(nextAdvice, 8000);
+</script>
+{% endblock %}

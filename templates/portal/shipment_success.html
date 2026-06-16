@@ -1,0 +1,70 @@
+{% extends "base_portal.html" %}
+{% load i18n %}
+
+{% block title %}Shipment Registered — IGL Portal{% endblock %}
+
+{% block page_header %}
+<h4 class="mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Shipment Registered Successfully</h4>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card shadow-sm text-center">
+      <div class="card-body py-5 px-4">
+
+        <div class="success-icon-wrap mb-4">
+          <i class="fas fa-check-circle fa-4x text-success"></i>
+        </div>
+
+        <h3 class="mb-1">Shipment Created!</h3>
+        <p class="text-muted mb-4">Share this tracking code with your customer</p>
+
+        <!-- Token Display -->
+        <div class="token-display-box mx-auto mb-4">
+          <div class="token-label">TRACKING CODE</div>
+          <div class="token-value font-mono" id="tokenText">{{ shipment.tracking_token }}</div>
+          <button class="btn btn-sm btn-outline-secondary mt-2" onclick="copyToken()">
+            <i class="fas fa-copy me-1"></i><span id="copyLabel">Copy</span>
+          </button>
+        </div>
+
+        <!-- Shipment Summary -->
+        <div class="summary-box text-start mb-4">
+          <div class="row g-2">
+            <div class="col-6"><span class="info-label">Sender</span><br><strong>{% if shipment.sender %}{{ shipment.sender.full_name }}{% endif %}</strong></div>
+            <div class="col-6"><span class="info-label">Receiver</span><br><strong>{% if shipment.receiver %}{{ shipment.receiver.full_name }}{% endif %}</strong></div>
+            <div class="col-6"><span class="info-label">Destination</span><br>{{ shipment.destination_country }}</div>
+            <div class="col-6"><span class="info-label">Est. Delivery</span><br>{{ shipment.estimated_delivery_at|date:"d M Y" }}</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+          <a href="{% url 'portal_shipment_receipt' shipment.pk %}" class="btn btn-portal-primary">
+            <i class="fas fa-file-pdf me-2"></i>Download PDF Receipt
+          </a>
+          <a href="{% url 'portal_shipment_detail' shipment.pk %}" class="btn btn-outline-secondary">
+            <i class="fas fa-eye me-2"></i>View Details
+          </a>
+          <a href="{% url 'portal_shipment_new' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-plus me-2"></i>New Shipment
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyToken() {
+  navigator.clipboard.writeText('{{ shipment.tracking_token }}').then(() => {
+    document.getElementById('copyLabel').textContent = 'Copied!';
+    setTimeout(() => document.getElementById('copyLabel').textContent = 'Copy', 2000);
+  });
+}
+</script>
+{% endblock %}

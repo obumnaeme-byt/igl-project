@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block content %}
+
+<!-- ── Hero / Tracking Section ───────────────────────────────────────────── -->
+<section class="relative min-h-[90vh] flex items-center justify-center text-center overflow-hidden"
+         style="background: linear-gradient(rgba(11,31,58,0.82), rgba(11,31,58,0.72)), url('{% static "images/new.jpg" %}') center/cover no-repeat;">
+
+  <div class="relative z-10 max-w-3xl mx-auto px-4 py-16">
+    <p class="text-signal font-mono text-sm font-medium tracking-widest uppercase mb-4">
+      {% trans "International Package Delivery" %}
+    </p>
+    <h1 class="font-display font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl leading-tight mb-4">
+      {% trans "WELCOME TO" %}<br>
+      <span class="text-signal">{% trans "INTER GLOBAL LOGISTIC" %}</span>
+    </h1>
+    <p class="text-white/70 text-lg mb-10">
+      {% trans "Enter your Air WayBill (AWB) or tracking number to monitor your shipment in real time." %}
+    </p>
+
+    <!-- Tracking Form -->
+    <form method="get" action="{% url 'core:home' %}" class="tracking-form" novalidate>
+      {% if error %}
+        <div class="error-banner" role="alert" id="tracking-error">
+          <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+        </div>
+      {% endif %}
+      <div class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+        <input
+          type="text"
+          name="token"
+          id="trackingInput"
+          value="{{ tracking_input }}"
+          placeholder="{% trans 'e.g. IGL-X7K2-9QMT' %}"
+          class="flex-1 bg-white/10 backdrop-blur border border-white/30 text-white placeholder-white/50
+                 rounded-lg px-4 py-3 font-mono text-base focus:outline-none focus:ring-2 focus:ring-signal
+                 focus:border-transparent transition"
+          autocomplete="off"
+          aria-label="{% trans 'Tracking code input' %}"
+        >
+        <button type="submit"
+                class="bg-signal hover:bg-blue-600 text-white font-display font-semibold
+                       px-8 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95
+                       whitespace-nowrap shadow-lg shadow-signal/30">
+          <i class="fas fa-search mr-2"></i>{% trans "TRACK" %}
+        </button>
+      </div>
+    </form>
+
+    <!-- Trust Indicators -->
+    <div class="flex flex-wrap justify-center gap-6 mt-10 text-white/50 text-sm">
+      <span><i class="fas fa-check-circle text-signal mr-1"></i>{% trans "No account needed" %}</span>
+      <span><i class="fas fa-check-circle text-signal mr-1"></i>{% trans "Real-time updates" %}</span>
+      <span><i class="fas fa-check-circle text-signal mr-1"></i>{% trans "10+ languages" %}</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── About Section ─────────────────────────────────────────────────────── -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="rounded-2xl overflow-hidden shadow-xl">
+        <img src="{% static 'images/inter.jpeg' %}" alt="{% trans 'Inter Global Logistics Team' %}"
+             class="w-full h-80 object-cover">
+      </div>
+      <div>
+        <p class="text-signal font-mono text-xs tracking-widest uppercase mb-2">{% trans "Who We Are" %}</p>
+        <h2 class="font-display font-bold text-navy text-3xl sm:text-4xl mb-5">
+          {% trans "About Inter Global Logistics" %}
+        </h2>
+        <p class="text-slate text-base leading-relaxed mb-4">
+          {% trans "Inter Global Logistics is a trusted international delivery company committed to providing fast, secure, and reliable shipping solutions for businesses and individuals worldwide." %}
+        </p>
+        <p class="text-slate text-base leading-relaxed mb-6">
+          {% trans "With a strong global network and advanced logistics systems, we ensure that every shipment is handled with care and delivered on time." %}
+        </p>
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="text-center p-3 bg-cloud rounded-lg">
+            <i class="fas fa-check-circle text-signal text-xl mb-1 block"></i>
+            <span class="text-sm font-medium text-navy">{% trans "Trusted Worldwide" %}</span>
+          </div>
+          <div class="text-center p-3 bg-cloud rounded-lg">
+            <i class="fas fa-shield-alt text-signal text-xl mb-1 block"></i>
+            <span class="text-sm font-medium text-navy">{% trans "Secure Delivery" %}</span>
+          </div>
+          <div class="text-center p-3 bg-cloud rounded-lg">
+            <i class="fas fa-bolt text-signal text-xl mb-1 block"></i>
+            <span class="text-sm font-medium text-navy">{% trans "Fast Logistics" %}</span>
+          </div>
+        </div>
+        <a href="{% url 'core:about' %}"
+           class="inline-flex items-center gap-2 bg-navy text-white font-display font-semibold
+                  px-6 py-3 rounded-lg hover:bg-signal transition-colors duration-200">
+          {% trans "Learn More" %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Why Choose Us ─────────────────────────────────────────────────────── -->
+<section class="py-20 bg-cloud">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="text-signal font-mono text-xs tracking-widest uppercase mb-2">{% trans "Our Strengths" %}</p>
+    <h2 class="font-display font-bold text-navy text-3xl sm:text-4xl mb-3">
+      {% trans "Why Traders Choose Us" %}
+    </h2>
+    <p class="text-slate text-base max-w-xl mx-auto mb-12">
+      {% trans "We deliver reliability, speed, and trust to businesses worldwide." %}
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% with features=True %}
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-truck"></i></div>
+          <h3 class="font-display font-semibold text-navy text-lg mb-2">{% trans "Fast Delivery" %}</h3>
+          <p class="text-slate text-sm">{% trans "Optimized logistics network ensures your goods arrive on schedule." %}</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3 class="font-display font-semibold text-navy text-lg mb-2">{% trans "Secure Handling" %}</h3>
+          <p class="text-slate text-sm">{% trans "Strict safety protocols protect every shipment from origin to destination." %}</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <h3 class="font-display font-semibold text-navy text-lg mb-2">{% trans "Real-Time Tracking" %}</h3>
+          <p class="text-slate text-sm">{% trans "Track your packages anytime with our token-based tracking system." %}</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-globe"></i></div>
+          <h3 class="font-display font-semibold text-navy text-lg mb-2">{% trans "Global Coverage" %}</h3>
+          <p class="text-slate text-sm">{% trans "We connect traders across 120+ countries with seamless delivery." %}</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-dollar-sign"></i></div>
+          <h3 class="font-display font-semibold text-navy text-lg mb-2">{% trans "Affordable Pricing" %}</h3>
+          <p class="text-slate text-sm">{% trans "Transparent rates with no hidden charges." %}</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-headset"></i></div>
+          <h3 class="font-display font-semibold text-navy text-lg mb-2">{% trans "24/7 Support" %}</h3>
+          <p class="text-slate text-sm">{% trans "Our team is always available to assist you anytime, anywhere." %}</p>
+        </div>
+      {% endwith %}
+    </div>
+  </div>
+</section>
+
+<!-- ── Hero Banner ───────────────────────────────────────────────────────── -->
+<section class="relative h-[60vh] flex items-center justify-center text-center"
+         style="background: linear-gradient(rgba(11,31,58,0.75),rgba(11,31,58,0.65)), url('{% static "images/case.jpeg" %}') center/cover no-repeat;">
+  <div class="px-4">
+    <h2 class="font-display font-extrabold text-white text-4xl sm:text-5xl mb-4">
+      {% trans "Fast & Reliable Global Delivery" %}
+    </h2>
+    <p class="text-white/70 text-lg mb-8">{% trans "We deliver your goods safely and on time worldwide." %}</p>
+    <a href="{% url 'core:contact' %}"
+       class="inline-block bg-signal hover:bg-blue-600 text-white font-display font-semibold
+              px-8 py-4 rounded-lg transition hover:scale-105 shadow-lg shadow-signal/40">
+      {% trans "Get Started" %}
+    </a>
+  </div>
+</section>
+
+<!-- ── Delivery Guidelines / Advice ─────────────────────────────────────── -->
+<section class="py-20 relative overflow-hidden"
+         style="background: linear-gradient(rgba(11,31,58,0.85),rgba(11,31,58,0.8)), url('{% static "images/case2.jpeg" %}') center/cover no-repeat;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="text-signal font-mono text-xs tracking-widest uppercase mb-2">{% trans "Important" %}</p>
+        <h2 class="font-display font-bold text-white text-3xl sm:text-4xl mb-4">
+          {% trans "Important Delivery Guidelines You Must Know" %}
+        </h2>
+        <p class="text-white/60 text-base leading-relaxed">
+          {% trans "Please review these guidelines carefully to ensure a smooth and successful delivery process." %}
+        </p>
+      </div>
+
+      <!-- Rotating Advice Card -->
+      <div class="bg-white rounded-2xl p-8 shadow-2xl max-w-sm mx-auto lg:mx-0">
+        <p class="text-signal font-mono text-xs font-semibold tracking-widest uppercase mb-4">
+          {% trans "Advice" %}
+        </p>
+        <p id="advice-text" class="text-gray-700 font-medium text-base leading-relaxed min-h-[5rem] transition-opacity duration-500">
+          {{ advice_list.0 }}
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+          <button id="next-advice"
+                  class="w-10 h-10 bg-navy rounded-full flex items-center justify-center hover:bg-signal transition-colors"
+                  aria-label="{% trans 'Next tip' %}">
+            <i class="fas fa-dice text-white text-sm"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Testimonials ──────────────────────────────────────────────────────── -->
+<section class="py-20 bg-white text-center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <p class="text-signal font-mono text-xs tracking-widest uppercase mb-2">{% trans "Reviews" %}</p>
+    <h2 class="font-display font-bold text-navy text-3xl sm:text-4xl mb-12">
+      {% trans "What Our Clients Say" %}
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% with testimonials=True %}
+        <div class="testimonial-card">
+          <img src="{% static 'images/1.jpeg' %}" alt="Carlos M." class="testimonial-avatar">
+          <p class="text-slate text-sm leading-relaxed italic mb-3">
+            "{% trans 'Fast and reliable service. My package arrived on time and in perfect condition. Highly recommend!' %}"
+          </p>
+          <p class="font-semibold text-navy text-sm">Carlos M.</p>
+          <p class="text-xs text-slate">Goiás</p>
+        </div>
+        <div class="testimonial-card">
+          <img src="{% static 'images/2.jpeg' %}" alt="Alves R." class="testimonial-avatar">
+          <p class="text-slate text-sm leading-relaxed italic mb-3">
+            "{% trans 'Impressed with the transparency and updates throughout. Very trustworthy company.' %}"
+          </p>
+          <p class="font-semibold text-navy text-sm">Alves R.</p>
+          <p class="text-xs text-slate">São Paulo</p>
+        </div>
+        <div class="testimonial-card">
+          <img src="{% static 'images/3.jpeg' %}" alt="Natalie L." class="testimonial-avatar">
+          <p class="text-slate text-sm leading-relaxed italic mb-3">
+            "{% trans 'Excellent communication and smooth delivery. I knew exactly where my package was.' %}"
+          </p>
+          <p class="font-semibold text-navy text-sm">Natalie L.</p>
+          <p class="text-xs text-slate">Berlin</p>
+        </div>
+        <div class="testimonial-card">
+          <img src="{% static 'images/4.jpeg' %}" alt="James A." class="testimonial-avatar">
+          <p class="text-slate text-sm leading-relaxed italic mb-3">
+            "{% trans 'Quick delivery and great customer support. Professional from start to finish.' %}"
+          </p>
+          <p class="font-semibold text-navy text-sm">James A.</p>
+          <p class="text-xs text-slate">Monterrey</p>
+        </div>
+      {% endwith %}
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats Counter ─────────────────────────────────────────────────────── -->
+<section class="py-16 bg-navy counter-section">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+      <div>
+        <h2 class="font-display font-extrabold text-white text-4xl counter" data-target="5000">0</h2>
+        <p class="text-white/60 text-sm mt-1">{% trans "Deliveries Completed" %}</p>
+      </div>
+      <div>
+        <h2 class="font-display font-extrabold text-white text-4xl counter" data-target="120">0</h2>
+        <p class="text-white/60 text-sm mt-1">{% trans "Countries Covered" %}</p>
+      </div>
+      <div>
+        <h2 class="font-display font-extrabold text-signal text-4xl">98%</h2>
+        <p class="text-white/60 text-sm mt-1">{% trans "On-Time Delivery" %}</p>
+      </div>
+      <div>
+        <h2 class="font-display font-extrabold text-signal text-4xl">24/7</h2>
+        <p class="text-white/60 text-sm mt-1">{% trans "Customer Support" %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // ── Rotating Advice ─────────────────────────────────────────────────────
+  const adviceList = [
+    {% for tip in advice_list %}"{{ tip|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}
+  ];
+  let adviceIndex = 0;
+  const adviceEl = document.getElementById('advice-text');
+
+  function showAdvice(i) {
+    adviceEl.style.opacity = '0';
+    setTimeout(() => {
+      adviceEl.textContent = adviceList[i];
+      adviceEl.style.opacity = '1';
+    }, 300);
+  }
+
+  // Auto-rotate every 8 seconds
+  const adviceTimer = setInterval(() => {
+    adviceIndex = (adviceIndex + 1) % adviceList.length;
+    showAdvice(adviceIndex);
+  }, 8000);
+
+  document.getElementById('next-advice').addEventListener('click', () => {
+    clearInterval(adviceTimer);
+    adviceIndex = (adviceIndex + 1) % adviceList.length;
+    showAdvice(adviceIndex);
+  });
+</script>
+{% endblock %}

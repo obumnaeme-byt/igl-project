@@ -1,0 +1,29 @@
+{% extends "base_public.html" %}
+{% load i18n static %}
+{% block title %}{% trans "About Us" %} — Inter Global Logistic{% endblock %}
+{% block content %}
+<section class="page-hero text-center py-5">
+  <h1>{% trans "About Our Company" %}</h1>
+  <p class="text-white">{% trans "Delivering trust, speed, and reliability worldwide" %}</p>
+</section>
+<section class="py-5">
+  <div class="container" style="max-width:760px">
+    <h2>{% trans "Who We Are" %}</h2>
+    <p>{% trans "Inter Global Logistics is a leading international delivery company dedicated to providing secure, fast, and reliable logistics solutions." %}</p>
+    <h2 class="mt-4">{% trans "Our Mission" %}</h2>
+    <p>{% trans "To simplify global shipping by delivering efficient and affordable logistics services while maintaining the highest standards of safety." %}</p>
+    <h2 class="mt-4">{% trans "Our Vision" %}</h2>
+    <p>{% trans "To become a globally recognized logistics provider known for innovation, reliability, and customer satisfaction." %}</p>
+  </div>
+</section>
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-md-3"><div class="feature-card"><i class="fas fa-truck fa-2x text-igl mb-3"></i><h5>{% trans "Fast Delivery" %}</h5></div></div>
+      <div class="col-md-3"><div class="feature-card"><i class="fas fa-shield-alt fa-2x text-igl mb-3"></i><h5>{% trans "Secure Shipping" %}</h5></div></div>
+      <div class="col-md-3"><div class="feature-card"><i class="fas fa-globe fa-2x text-igl mb-3"></i><h5>{% trans "Global Reach" %}</h5></div></div>
+      <div class="col-md-3"><div class="feature-card"><i class="fas fa-headset fa-2x text-igl mb-3"></i><h5>{% trans "24/7 Support" %}</h5></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

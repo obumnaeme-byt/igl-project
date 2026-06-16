@@ -1,0 +1,16 @@
+{% extends "base_public.html" %}
+{% load i18n %}
+{% block title %}{% trans "Our Services" %} — Inter Global Logistic{% endblock %}
+{% block content %}
+<section class="page-hero text-center py-5"><h1>{% trans "Our Services" %}</h1></section>
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 col-sm-6"><div class="feature-card text-center"><i class="fas fa-plane fa-3x text-igl mb-3"></i><h5>{% trans "Air Freight" %}</h5><p>{% trans "Fast international shipping via air." %}</p></div></div>
+      <div class="col-md-3 col-sm-6"><div class="feature-card text-center"><i class="fas fa-ship fa-3x text-igl mb-3"></i><h5>{% trans "Sea Freight" %}</h5><p>{% trans "Cost-effective shipping for large cargo." %}</p></div></div>
+      <div class="col-md-3 col-sm-6"><div class="feature-card text-center"><i class="fas fa-truck fa-3x text-igl mb-3"></i><h5>{% trans "Road Transport" %}</h5><p>{% trans "Reliable delivery across cities and regions." %}</p></div></div>
+      <div class="col-md-3 col-sm-6"><div class="feature-card text-center"><i class="fas fa-box fa-3x text-igl mb-3"></i><h5>{% trans "Package Handling" %}</h5><p>{% trans "Safe packaging and secure handling." %}</p></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends "base_portal.html" %}
+{% load i18n humanize %}
+
+{% block title %}{{ shipment.tracking_token }} — IGL Portal{% endblock %}
+
+{% block page_header %}
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h4 class="mb-0 font-mono"><i class="fas fa-box me-2"></i>{{ shipment.tracking_token }}</h4>
+    <p class="text-muted mb-0 small">Registered {{ shipment.created_at|date:"d M Y, H:i" }} UTC by {{ shipment.registered_by.username|default:"system" }}</p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <span class="status-pill status-{{ shipment.current_status }}">{{ shipment.get_current_status_display }}</span>
+    <a href="{% url 'portal_shipment_receipt' shipment.pk %}" class="btn btn-sm btn-outline-secondary">
+      <i class="fas fa-file-pdf me-1"></i>Download Receipt
+    </a>
+    <a href="{% url 'portal_shipment_list' %}" class="btn btn-sm btn-outline-secondary">
+      <i class="fas fa-arrow-left me-1"></i>Back
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- LEFT column: Details + Timeline -->
+  <div class="col-xl-8">
+
+    <!-- Shipment Info -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header section-header"><i class="fas fa-info-circle me-2"></i>Shipment Details</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="info-label">Package Description</label>
+            <p>{{ shipment.package_description }}</p>
+          </div>
+          <div class="col-md-3">
+            <label class="info-label">Weight</label>
+            <p>{% if shipment.weight_kg %}{{ shipment.weight_kg }} kg{% else %}—{% endif %}</p>
+          </div>
+          <div class="col-md-3">
+            <label class="info-label">Quantity</label>
+            <p>{{ shipment.quantity }}</p>
+          </div>
+          <div class="col-md-4">
+            <label class="info-label">Service Reference</label>
+            <p>{{ shipment.service_reference|default:"—" }}</p>
+          </div>
+          <div class="col-md-4">
+            <label class="info-label">Destination</label>
+            <p class="fw-semibold">{{ shipment.destination_country }}</p>
+          </div>
+          <div class="col-md-4">
+            <label class="info-label">Estimated Delivery</label>
+            <p>{{ shipment.estimated_delivery_at|date:"d M Y, H:i" }}</p>
+          </div>
+          <div class="col-md-4">
+            <label class="info-label">Current Location</label>
+            <p>{{ shipment.current_location|default:"—" }}</p>
+          </div>
+          <div class="col-md-4">
+            <label class="info-label">Payment Status</label>
+            <p><span class="pay-badge pay-{{ shipment.payment_status }}">{{ shipment.get_payment_status_display }}</span></p>
+          </div>
+          {% if shipment.declared_value %}
+          <div class="col-md-4">
+            <label class="info-label">Declared Value</label>
+            <p>${{ shipment.declared_value|intcomma }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sender & Receiver -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header section-header"><i class="fas fa-user-circle me-2"></i>Sender</div>
+          <div class="card-body">
+            {% if sender %}
+            <p class="fw-bold mb-1">{{ sender.full_name }}</p>
+            <p class="mb-1 text-muted small">{{ sender.phone_number }}</p>
+            <p class="mb-1 small">{{ sender.address_line1 }}{% if sender.address_line2 %}, {{ sender.address_line2 }}{% endif %}</p>
+            <p class="mb-0 small">{{ sender.city }}{% if sender.state_province %}, {{ sender.state_province }}{% endif %}</p>
+            <p class="mb-0 small fw-semibold">{{ sender.country }} {% if sender.postal_code %}{{ sender.postal_code }}{% endif %}</p>
+            {% else %}<p class="text-muted">No sender info.</p>{% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header section-header"><i class="fas fa-user-tag me-2"></i>Receiver</div>
+          <div class="card-body">
+            {% if receiver %}
+            <p class="fw-bold mb-1">{{ receiver.full_name }}</p>
+            <p class="mb-1 text-muted small">{{ receiver.phone_number }}</p>
+            <p class="mb-1 small">{{ receiver.address_line1 }}{% if receiver.address_line2 %}, {{ receiver.address_line2 }}{% endif %}</p>
+            <p class="mb-0 small">{{ receiver.city }}{% if receiver.state_province %}, {{ receiver.state_province }}{% endif %}</p>
+            <p class="mb-0 small fw-semibold">{{ receiver.country }} {% if receiver.postal_code %}{{ receiver.postal_code }}{% endif %}</p>
+            {% else %}<p class="text-muted">No receiver info.</p>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tracking Timeline -->
+    <div class="card shadow-sm">
+      <div class="card-header section-header"><i class="fas fa-history me-2"></i>Tracking History</div>
+      <div class="card-body">
+        {% if events %}
+        <div class="timeline-container">
+          {% for event in events %}
+          <div class="timeline-item {% if forloop.last %}timeline-last{% endif %}">
+            <div class="timeline-dot status-dot-{{ event.status }}"></div>
+            <div class="timeline-content">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-1">
+                <div>
+                  <span class="status-pill status-{{ event.status }} status-sm">{{ event.get_status_display }}</span>
+                  {% if event.location_description %}
+                  <p class="mb-0 mt-1 small fw-semibold"><i class="fas fa-map-pin me-1 text-muted"></i>{{ event.location_description }}</p>
+                  {% endif %}
+                  {% if event.notes %}
+                  <p class="mb-0 text-muted small">{{ event.notes }}</p>
+                  {% endif %}
+                  {% if event.updated_by %}
+                  <p class="mb-0 text-muted" style="font-size:0.72rem">Updated by {{ event.updated_by.username }}</p>
+                  {% endif %}
+                </div>
+                <small class="text-muted text-nowrap">{{ event.event_timestamp|date:"d M Y H:i" }}</small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-3">No tracking events yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT column: Status Update -->
+  <div class="col-xl-4">
+    <div class="card shadow-sm sticky-xl-top" style="top:80px">
+      <div class="card-header section-header"><i class="fas fa-edit me-2"></i>Update Status</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'portal_shipment_status' shipment.pk %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">New Status</label>
+            {{ status_form.current_status }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Current Location</label>
+            {{ status_form.current_location }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Payment Status</label>
+            {{ status_form.payment_status }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>
+            {{ status_form.notes }}
+          </div>
+          <button type="submit" class="btn btn-portal-primary w-100">
+            <i class="fas fa-save me-2"></i>Save Update
+          </button>
+        </form>
+        <hr>
+        <div class="d-grid gap-2">
+          <a href="{% url 'portal_shipment_receipt' shipment.pk %}" class="btn btn-outline-dark">
+            <i class="fas fa-file-pdf me-2"></i>Download PDF Receipt
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

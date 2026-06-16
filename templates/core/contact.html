@@ -1,0 +1,24 @@
+{% extends "base_public.html" %}
+{% load i18n %}
+{% block title %}{% trans "Contact Us" %} — Inter Global Logistic{% endblock %}
+{% block content %}
+<section class="page-hero text-center py-5"><h1>{% trans "Contact Us" %}</h1></section>
+<section class="py-5">
+  <div class="container" style="max-width:560px">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <form method="post" action="{% url 'contact' %}">
+          {% csrf_token %}
+          <div class="mb-3"><label class="form-label">{% trans "Your Name" %}</label><input type="text" name="name" class="form-control" required></div>
+          <div class="mb-3"><label class="form-label">{% trans "Your Email" %}</label><input type="email" name="email" class="form-control" required></div>
+          <div class="mb-3"><label class="form-label">{% trans "Your Message" %}</label><textarea name="message" class="form-control" rows="4" required></textarea></div>
+          <button type="submit" class="btn btn-igl w-100">{% trans "Send Message" %}</button>
+        </form>
+        <hr>
+        <p><i class="fas fa-envelope me-2 text-igl"></i>{{ SUPPORT_EMAIL }}</p>
+        <p><i class="fas fa-phone me-2 text-igl"></i>+234 8100151401</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

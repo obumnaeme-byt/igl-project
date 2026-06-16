@@ -1,0 +1,207 @@
+{% extends "base_portal.html" %}
+{% load i18n %}
+
+{% block title %}Register New Shipment — IGL Portal{% endblock %}
+
+{% block page_header %}
+<h4 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Register New Shipment</h4>
+<p class="text-muted mb-0 small">Fill in all required fields. A tracking token will be auto-generated.</p>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'portal_shipment_new' %}" id="shipmentForm" novalidate>
+  {% csrf_token %}
+
+  <div class="row g-4">
+
+    <!-- LEFT: Shipment Details -->
+    <div class="col-xl-8">
+
+      <!-- Package Info -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header section-header">
+          <i class="fas fa-box me-2"></i>Package Information
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label required-label">Package Description</label>
+            {{ shipment_form.package_description }}
+            {% if shipment_form.package_description.errors %}
+            <div class="invalid-feedback d-block">{{ shipment_form.package_description.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Weight (kg)</label>
+              {{ shipment_form.weight_kg }}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Quantity</label>
+              {{ shipment_form.quantity }}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Declared Value ($)</label>
+              {{ shipment_form.declared_value }}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Service Reference</label>
+              {{ shipment_form.service_reference }}
+            </div>
+          </div>
+          <div class="row g-3 mt-1">
+            <div class="col-md-4">
+              <label class="form-label">Length (cm)</label>{{ shipment_form.length_cm }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Width (cm)</label>{{ shipment_form.width_cm }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Height (cm)</label>{{ shipment_form.height_cm }}
+            </div>
+          </div>
+          <div class="row g-3 mt-1">
+            <div class="col-md-6">
+              <label class="form-label required-label">Destination Country</label>
+              {{ shipment_form.destination_country }}
+              {% if shipment_form.destination_country.errors %}
+              <div class="invalid-feedback d-block">{{ shipment_form.destination_country.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label required-label">Estimated Delivery Date</label>
+              {{ shipment_form.estimated_delivery_at }}
+              {% if shipment_form.estimated_delivery_at.errors %}
+              <div class="invalid-feedback d-block">{{ shipment_form.estimated_delivery_at.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row g-3 mt-1">
+            <div class="col-md-4">
+              <label class="form-label">Payment Status</label>
+              {{ shipment_form.payment_status }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sender -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header section-header">
+          <i class="fas fa-user-circle me-2"></i>Sender (Remetente)
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label required-label">Full Name</label>
+              {{ sender_form.full_name }}
+              {% if sender_form.full_name.errors %}<div class="invalid-feedback d-block">{{ sender_form.full_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label required-label">Phone Number</label>
+              {{ sender_form.phone_number }}
+              {% if sender_form.phone_number.errors %}<div class="invalid-feedback d-block">{{ sender_form.phone_number.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-8">
+              <label class="form-label required-label">Address Line 1</label>
+              {{ sender_form.address_line1 }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Address Line 2</label>
+              {{ sender_form.address_line2 }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label required-label">City</label>
+              {{ sender_form.city }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">State / Province</label>
+              {{ sender_form.state_province }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label required-label">Country</label>
+              {{ sender_form.country }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Postal Code</label>
+              {{ sender_form.postal_code }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Receiver -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header section-header">
+          <i class="fas fa-user-tag me-2"></i>Receiver (Destinatário)
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label required-label">Full Name</label>
+              {{ receiver_form.full_name }}
+              {% if receiver_form.full_name.errors %}<div class="invalid-feedback d-block">{{ receiver_form.full_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label required-label">Phone Number</label>
+              {{ receiver_form.phone_number }}
+              {% if receiver_form.phone_number.errors %}<div class="invalid-feedback d-block">{{ receiver_form.phone_number.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-8">
+              <label class="form-label required-label">Address Line 1</label>
+              {{ receiver_form.address_line1 }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Address Line 2</label>
+              {{ receiver_form.address_line2 }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label required-label">City</label>
+              {{ receiver_form.city }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">State / Province</label>
+              {{ receiver_form.state_province }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label required-label">Country</label>
+              {{ receiver_form.country }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Postal Code</label>
+              {{ receiver_form.postal_code }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Sidebar Summary -->
+    <div class="col-xl-4">
+      <div class="card shadow-sm sticky-xl-top" style="top:80px">
+        <div class="card-header section-header">
+          <i class="fas fa-info-circle me-2"></i>Submit Shipment
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info small">
+            <i class="fas fa-magic me-1"></i>
+            A unique tracking token <strong>(IGL-XXXX-XXXX)</strong> will be auto-generated upon submission.
+          </div>
+          <ul class="list-unstyled small text-muted mb-4">
+            <li class="mb-1"><i class="fas fa-check text-success me-2"></i>Sender & Receiver details saved</li>
+            <li class="mb-1"><i class="fas fa-check text-success me-2"></i>Tracking history created</li>
+            <li class="mb-1"><i class="fas fa-check text-success me-2"></i>PDF receipt available immediately</li>
+          </ul>
+          <button type="submit" class="btn btn-portal-primary w-100 py-2">
+            <i class="fas fa-paper-plane me-2"></i>Register Shipment
+          </button>
+          <a href="{% url 'portal_shipment_list' %}" class="btn btn-outline-secondary w-100 mt-2">
+            Cancel
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</form>
+{% endblock %}

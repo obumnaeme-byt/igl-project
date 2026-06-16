@@ -1,0 +1,13 @@
+{% extends "base_public.html" %}
+{% load i18n %}
+{% block title %}{% trans "Shipment Not Found" %}{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container text-center" style="max-width:560px">
+    <i class="fas fa-search fa-4x text-muted mb-4"></i>
+    <h2>{% trans "No Shipment Found" %}</h2>
+    <p class="text-muted">{% trans "We couldn't find a shipment with tracking code" %} <strong class="font-mono">{{ token }}</strong>. {% trans "Please double-check and try again." %}</p>
+    <a href="{% url 'home' %}" class="btn btn-igl mt-3"><i class="fas fa-arrow-left me-2"></i>{% trans "Try Again" %}</a>
+  </div>
+</section>
+{% endblock %}

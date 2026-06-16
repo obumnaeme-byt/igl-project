@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IGL Shipping Receipt — {{ shipment.tracking_token }}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 12px; color: #111; background: #fff; }
+
+    .page { width: 148mm; min-height: 210mm; margin: 0 auto; padding: 10mm; }
+
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #bc4949; padding-bottom: 8px; margin-bottom: 12px; }
+    .header-brand h1 { font-size: 16px; color: #bc4949; font-weight: 800; letter-spacing: 1px; }
+    .header-brand p { font-size: 9px; color: #666; }
+    .header-logo { font-size: 10px; text-align: right; color: #555; }
+
+    /* Token / Status Bar */
+    .token-bar { background: #f8f8f8; border: 1px solid #ddd; border-left: 4px solid #bc4949; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .token-value { font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; letter-spacing: 3px; color: #bc4949; }
+    .status-box { text-align: right; }
+    .status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .pay-badge { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: bold; }
+    .pay-unpaid { background: #FEF3C7; color: #92400E; }
+    .pay-paid   { background: #D1FAE5; color: #065F46; }
+    .pay-partial { background: #FFEDD5; color: #9A3412; }
+
+    /* Columns */
+    .two-col { display: flex; gap: 10px; margin-bottom: 10px; }
+    .two-col > div { flex: 1; }
+
+    /* Section Boxes */
+    .section-box { border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+    .section-title { background: #bc4949; color: white; padding: 4px 10px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .section-body { padding: 8px 10px; }
+    .field-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+    .field-label { color: #888; font-size: 9px; width: 40%; }
+    .field-value { font-weight: 600; font-size: 10px; text-align: right; width: 58%; }
+
+    /* Barcode + QR */
+    .codes-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .barcode-wrap { flex: 1; text-align: center; }
+    .barcode-wrap img { max-width: 100%; height: 40px; }
+    .barcode-wrap p { font-family: 'Courier New', monospace; font-size: 8px; color: #555; margin-top: 2px; }
+    .qr-wrap { text-align: center; }
+    .qr-wrap img { width: 60px; height: 60px; }
+    .qr-wrap p { font-size: 8px; color: #888; margin-top: 2px; }
+
+    /* Timeline */
+    .timeline { padding: 6px 0; }
+    .t-item { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
+    .t-dot { width: 8px; height: 8px; border-radius: 50%; background: #bc4949; margin-top: 3px; flex-shrink: 0; }
+    .t-line { position: relative; }
+    .t-status { font-weight: bold; font-size: 9px; }
+    .t-loc    { font-size: 8px; color: #666; }
+    .t-date   { font-size: 8px; color: #999; }
+
+    /* Footer */
+    .receipt-footer { border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; text-align: center; font-size: 8px; color: #888; }
+
+    /* Divider */
+    .divider { border-top: 1px dashed #ccc; margin: 8px 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-brand">
+      <h1>INTER GLOBAL LOGISTICS</h1>
+      <p>{{ company_address }} | {{ company_phone }} | {{ company_email }}</p>
+    </div>
+    <div class="header-logo">
+      <div style="font-weight:bold;font-size:11px;">SHIPPING RECEIPT</div>
+      <div style="font-size:9px;color:#999;">{{ created_date }}</div>
+    </div>
+  </div>
+
+  <!-- TOKEN BAR -->
+  <div class="token-bar">
+    <div>
+      <div style="font-size:8px;color:#888;margin-bottom:2px;">TRACKING CODE / CÓDIGO DE RASTREIO</div>
+      <div class="token-value">{{ shipment.tracking_token }}</div>
+    </div>
+    <div class="status-box">
+      <span class="status-badge" style="background:#f0e4e4;color:#bc4949;">{{ shipment.get_current_status_display }}</span><br>
+      <span class="pay-badge pay-{{ shipment.payment_status }}">{{ payment_label_pt }} / {{ payment_label_en }}</span>
+    </div>
+  </div>
+
+  <!-- BARCODE + QR -->
+  <div class="codes-row">
+    <div class="barcode-wrap">
+      {% if barcode_b64 %}
+      <img src="data:image/png;base64,{{ barcode_b64 }}" alt="Barcode">
+      {% endif %}
+      <p>{{ shipment.tracking_token }}</p>
+    </div>
+    <div class="qr-wrap">
+      {% if qr_b64 %}
+      <img src="data:image/png;base64,{{ qr_b64 }}" alt="QR Code">
+      {% endif %}
+      <p>Scan to Track</p>
+    </div>
+  </div>
+
+  <!-- SENDER & RECEIVER -->
+  <div class="two-col">
+    <div class="section-box">
+      <div class="section-title">Sender / Remetente</div>
+      <div class="section-body">
+        {% if sender %}
+        <div class="field-row"><span class="field-label">Name</span><span class="field-value">{{ sender.full_name }}</span></div>
+        <div class="field-row"><span class="field-label">Phone</span><span class="field-value">{{ sender.phone_number }}</span></div>
+        <div class="field-row"><span class="field-label">Address</span><span class="field-value">{{ sender.address_line1 }}</span></div>
+        <div class="field-row"><span class="field-label">City</span><span class="field-value">{{ sender.city }}</span></div>
+        <div class="field-row"><span class="field-label">Country</span><span class="field-value">{{ sender.country }}</span></div>
+        {% else %}<p style="color:#999;font-size:9px;">No sender info.</p>{% endif %}
+      </div>
+    </div>
+    <div class="section-box">
+      <div class="section-title">Receiver / Destinatário</div>
+      <div class="section-body">
+        {% if receiver %}
+        <div class="field-row"><span class="field-label">Name</span><span class="field-value">{{ receiver.full_name }}</span></div>
+        <div class="field-row"><span class="field-label">Phone</span><span class="field-value">{{ receiver.phone_number }}</span></div>
+        <div class="field-row"><span class="field-label">Address</span><span class="field-value">{{ receiver.address_line1 }}</span></div>
+        <div class="field-row"><span class="field-label">City</span><span class="field-value">{{ receiver.city }}</span></div>
+        <div class="field-row"><span class="field-label">Country</span><span class="field-value">{{ receiver.country }}</span></div>
+        {% else %}<p style="color:#999;font-size:9px;">No receiver info.</p>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- PACKAGE DETAILS -->
+  <div class="section-box">
+    <div class="section-title">Package Details / Detalhes do Pacote</div>
+    <div class="section-body">
+      <div class="two-col">
+        <div>
+          <div class="field-row"><span class="field-label">Description</span><span class="field-value">{{ shipment.package_description|truncatechars:40 }}</span></div>
+          <div class="field-row"><span class="field-label">Destination</span><span class="field-value">{{ shipment.destination_country }}</span></div>
+          <div class="field-row"><span class="field-label">Est. Delivery</span><span class="field-value">{{ shipment.estimated_delivery_at|date:"d/m/Y" }}</span></div>
+        </div>
+        <div>
+          {% if shipment.weight_kg %}<div class="field-row"><span class="field-label">Weight</span><span class="field-value">{{ shipment.weight_kg }} kg</span></div>{% endif %}
+          <div class="field-row"><span class="field-label">Quantity</span><span class="field-value">{{ shipment.quantity }}</span></div>
+          {% if shipment.service_reference %}<div class="field-row"><span class="field-label">Service</span><span class="field-value">{{ shipment.service_reference }}</span></div>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRACKING TIMELINE -->
+  {% if shipment.tracking_events.all %}
+  <div class="section-box">
+    <div class="section-title">Tracking History / Histórico</div>
+    <div class="section-body">
+      <div class="timeline">
+        {% for event in shipment.tracking_events.all|slice:":5" %}
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div>
+            <span class="t-status">{{ event.get_status_display }}</span>
+            {% if event.location_description %} — <span class="t-loc">{{ event.location_description }}</span>{% endif %}
+            <br><span class="t-date">{{ event.event_timestamp|date:"d/m/Y H:i" }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- FOOTER -->
+  <div class="receipt-footer">
+    <p>This is an official shipping receipt issued by {{ company_name }}. Please retain for your records.</p>
+    <p>Este é um recibo oficial emitido por {{ company_name }}. Guarde para seus registros.</p>
+    <p>Track online: {{ base_url }}/track/{{ shipment.tracking_token }}/</p>
+  </div>
+
+</div>
+</body>
+</html>

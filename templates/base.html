@@ -1,0 +1,180 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page_title|default:"Inter Global Logistic" }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% trans 'Fast, secure international package delivery and tracking.' %}{% endblock %}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Tailwind CSS (CDN for v1) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:   '#0B1F3A',
+            signal: '#1A6FE6',
+            cloud:  '#F7F9FC',
+            cargo:  '#F57C00',
+            slate:  '#6B7280',
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body:    ['IBM Plex Sans', 'sans-serif'],
+            mono:    ['IBM Plex Mono', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'images/favicon-32x32.png' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="font-body bg-cloud text-gray-800 min-h-screen flex flex-col">
+
+  <!-- ── Navigation ─────────────────────────────────────────────────────── -->
+  <header class="bg-navy shadow-lg sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="{% url 'core:home' %}" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-signal rounded-lg flex items-center justify-center">
+          <span class="font-display font-bold text-white text-sm">IGL</span>
+        </div>
+        <span class="font-display font-bold text-white text-lg hidden sm:block">
+          Inter Global Logistic
+        </span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <ul class="hidden md:flex items-center gap-6 list-none m-0">
+        <li><a href="{% url 'core:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+          <i class="fas fa-home mr-1"></i>{% trans "Home" %}
+        </a></li>
+        <li><a href="{% url 'core:about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+          <i class="fas fa-info-circle mr-1"></i>{% trans "About" %}
+        </a></li>
+        <li><a href="{% url 'core:services' %}" class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">
+          <i class="fas fa-cogs mr-1"></i>{% trans "Services" %}
+        </a></li>
+        <li><a href="{% url 'core:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+          <i class="fas fa-phone mr-1"></i>{% trans "Contact" %}
+        </a></li>
+      </ul>
+
+      <!-- Language Selector -->
+      <div class="flex items-center gap-3">
+        <form action="{% url 'set_language' %}" method="post" class="inline">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}">
+          <select name="language" onchange="this.form.submit()"
+                  class="bg-navy border border-white/20 text-white text-sm rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-signal">
+            {% get_current_language as CURRENT_LANGUAGE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang_code, lang_name in LANGUAGES %}
+              <option value="{{ lang_code }}" {% if lang_code == CURRENT_LANGUAGE %}selected{% endif %}>
+                {{ lang_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+
+        <!-- Mobile menu toggle -->
+        <button id="menu-toggle" class="md:hidden text-white text-2xl focus:outline-none" aria-label="{% trans 'Toggle menu' %}">
+          <i class="fas fa-bars" id="menu-icon"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-navy border-t border-white/10 px-4 py-3">
+      <ul class="flex flex-col gap-3 list-none">
+        <li><a href="{% url 'core:home' %}" class="mobile-nav-link"><i class="fas fa-home mr-2"></i>{% trans "Home" %}</a></li>
+        <li><a href="{% url 'core:about' %}" class="mobile-nav-link"><i class="fas fa-info-circle mr-2"></i>{% trans "About" %}</a></li>
+        <li><a href="{% url 'core:services' %}" class="mobile-nav-link"><i class="fas fa-cogs mr-2"></i>{% trans "Services" %}</a></li>
+        <li><a href="{% url 'core:contact' %}" class="mobile-nav-link"><i class="fas fa-phone mr-2"></i>{% trans "Contact" %}</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ── Main Content ───────────────────────────────────────────────────── -->
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+  <footer class="bg-navy text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <!-- Company -->
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 bg-signal rounded flex items-center justify-center">
+              <span class="font-display font-bold text-white text-xs">IGL</span>
+            </div>
+            <span class="font-display font-semibold">Inter Global Logistic</span>
+          </div>
+          <p class="text-white/60 text-sm leading-relaxed">
+            {% trans "Fast, secure, and reliable international delivery solutions for businesses and individuals worldwide." %}
+          </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h3 class="font-display font-semibold mb-3 text-white/90">{% trans "Quick Links" %}</h3>
+          <ul class="space-y-2 text-sm text-white/60">
+            <li><a href="{% url 'core:home' %}" class="hover:text-signal transition-colors">{% trans "Home" %}</a></li>
+            <li><a href="{% url 'core:about' %}" class="hover:text-signal transition-colors">{% trans "About" %}</a></li>
+            <li><a href="{% url 'core:services' %}" class="hover:text-signal transition-colors">{% trans "Services" %}</a></li>
+            <li><a href="{% url 'core:contact' %}" class="hover:text-signal transition-colors">{% trans "Contact" %}</a></li>
+          </ul>
+        </div>
+
+        <!-- Services -->
+        <div>
+          <h3 class="font-display font-semibold mb-3 text-white/90">{% trans "Our Services" %}</h3>
+          <ul class="space-y-2 text-sm text-white/60">
+            <li>{% trans "Air Freight" %}</li>
+            <li>{% trans "Sea Freight" %}</li>
+            <li>{% trans "Road Transport" %}</li>
+            <li>{% trans "Package Handling" %}</li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h3 class="font-display font-semibold mb-3 text-white/90">{% trans "Contact Us" %}</h3>
+          <div class="space-y-2 text-sm text-white/60">
+            <p><i class="fas fa-envelope mr-2 text-signal"></i>{{ SUPPORT_EMAIL }}</p>
+            <p><i class="fas fa-phone mr-2 text-signal"></i>+{{ COMPANY_PHONE }}</p>
+            <p><i class="fas fa-location-dot mr-2 text-signal"></i>Miami, USA</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="border-t border-white/10 py-4 text-center text-white/40 text-sm">
+      © 2026 Inter Global Logistic. {% trans "All rights reserved." %}
+    </div>
+  </footer>
+
+  <!-- ── Scripts ────────────────────────────────────────────────────────── -->
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
