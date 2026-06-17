@@ -3,7 +3,7 @@ import dj_database_url
 Inter Global Logistic — Django Settings
 Production-ready configuration using python-decouple for environment variable management.
 """
-
+import os
 from pathlib import Path
 from decouple import config, Csv
 
@@ -17,6 +17,7 @@ ALLOWED_HOSTS = config(
     default="igl-project.onrender.com,localhost,127.0.0.1",
     cast=Csv()
 )
+print(DEBUG, ALLOWED_HOSTS)
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
     default="https://igl-project.onrender.com",
