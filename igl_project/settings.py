@@ -12,7 +12,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─── SECURITY ────────────────────────────────────────────────────────────────
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="igl-project-6.onrender.com,localhost,127.0.0.1",
+    cast=Csv()
+)
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="https://igl-project-6.onrender.com",
+    cast=Csv()
+)
 
 # ─── APPLICATIONS ─────────────────────────────────────────────────────────────
 DJANGO_APPS = [
